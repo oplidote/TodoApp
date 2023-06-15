@@ -5,8 +5,9 @@
 ## 프로젝트 실행 방법
 
 - git clone 으로 코드를 가져온 후 아래 명령어를 실행합니다.
+
   <code>npm install</code>
-  
+
   <code>npm run start</code>
 
 ## 배포 링크
