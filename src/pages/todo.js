@@ -63,7 +63,7 @@ const Todo = () => {
             return (
               <TodoItem key={i} todo={todo} getTodo={getTodo}/>
             );
-          }): '등록된 할 일이 존재하지 않습니다.'}
+          }): '목록이 비어 있습니다'}
       </ul>
       <div>
         <input
