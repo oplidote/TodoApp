@@ -1,30 +1,28 @@
 import { useEffect, useState } from "react";
-import { postMemberApi } from "../lib/customAxios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Signup = () => {
   const navigate = useNavigate();
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [disable, setDisable] = useState(true);
-  // 회원 가입
+
   const postMember = async () => {
+    const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
     try {
-      postMemberApi(id, pw);
+      const res = await axios.post(`${BACKEND_URL}/auth/signup`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        email: id,
+        password: pw,
+      });
       navigate("/signin");
     } catch (err) {
       console.log(err);
     }
   };
-
-  useEffect(() => {
-    // 로그인 여부 검증
-    const isLogined = !!window.localStorage.getItem("token");
-    if (isLogined) {
-      navigate("/todo");
-    }
-  }, []);
-
   // 이메일 패스워드 유효성 검사
   const isValidate = () => {
     const regexId = /@/g; // '@' 포함

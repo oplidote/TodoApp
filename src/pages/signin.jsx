@@ -1,17 +1,25 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { loginMemberApi } from "../lib/customAxios";
+import axios from "axios";
 
 const Signin = () => {
   const navigate = useNavigate();
+
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [disable, setDisable] = useState(true);
-
   // 로그인 함수
   const loginMember = async () => {
     try {
-      loginMemberApi(id, pw);
+      const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
+      const res = await axios.post(`${BACKEND_URL}/auth/signin`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        email: id,
+        password: pw,
+      });
+      window.localStorage.setItem("token", res.data.access_token);
       navigate("/todo");
     } catch (err) {
       console.log(err);
@@ -28,12 +36,6 @@ const Signin = () => {
       setDisable(true);
     }
   };
-  useEffect(() => {
-    const isLogined = !!window.localStorage.getItem("token");
-    if (isLogined) {
-      navigate("/todo");
-    }
-  }, []);
 
   useEffect(() => {
     isValidate();

@@ -1,14 +1,20 @@
+import axios from "axios";
 import { useState } from "react";
-import { deleteTodoApi, updatedTodoApi } from "../lib/customAxios";
 
 const TodoItem = ({ todo, getTodo }) => {
+  const token = window.localStorage.getItem("token");
+  const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
 
   const [isEdit, setIsEdit] = useState(false);
   const [newTodo, setNewTodo] = useState('');
-  
+
   const deleteTodo = async () => {
     try {
-      await deleteTodoApi(todo.id);
+      const res = await axios.delete(`${BACKEND_URL}/todos/${todo.id}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       getTodo();
     } catch (err) {
       console.log(err);
@@ -17,7 +23,19 @@ const TodoItem = ({ todo, getTodo }) => {
 
   const checkedTodo = async () => {
     try {
-      await updatedTodoApi(todo.id, todo.todo, !todo.isCompleted);
+      const res = await axios.put(
+        `${BACKEND_URL}/todos/${todo.id}`,
+        {
+          todo: todo.todo,
+          isCompleted: !todo.isCompleted,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       getTodo();
     } catch (err) {
       console.log(err);
@@ -26,7 +44,16 @@ const TodoItem = ({ todo, getTodo }) => {
 
   const updatedTodo = async () => {
     try {
-      await updatedTodoApi(todo.id, newTodo, todo.isCompleted);
+      const res = await axios.put(
+        `${BACKEND_URL}/todos/${todo.id}`,
+        { todo: newTodo, isCompleted: todo.isCompleted },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
       getTodo();
       setIsEdit(false);
     } catch (err) {
@@ -78,8 +105,8 @@ const TodoItem = ({ todo, getTodo }) => {
           <button
             todos-testid="modify-button"
             onClick={() => {
-              setNewTodo(todo.todo);
               setIsEdit(true);
+              setNewTodo(todo.todo);
             }}
           >
             수정
