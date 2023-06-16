@@ -13,7 +13,9 @@ const Signin = () => {
     try {
       loginMemberApi(id, pw);
       navigate("/todo");
-    } catch {}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   const isValidate = () => {
@@ -36,7 +38,7 @@ const Signin = () => {
   useEffect(() => {
     isValidate();
   }, [id, pw]);
-  
+
   return (
     <div>
       <label htmlFor="id">이메일</label>

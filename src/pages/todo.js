@@ -2,29 +2,18 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TodoItem from "../components/TodoItem";
+import { getTodoApi, postTodoApi } from "../lib/customAxios";
 
 const Todo = () => {
-  const token = window.localStorage.getItem("token");
-  const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
   const navigate = useNavigate();
-
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState("");
 
   const postTodo = async () => {
     try {
-      const res = await axios.post(
-        `${BACKEND_URL}/todos`,
-        { todo: text },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await postTodoApi(text);
       getTodo();
-      setText('')
+      setText("");
     } catch (err) {
       console.log(err);
     }
@@ -32,12 +21,9 @@ const Todo = () => {
 
   const getTodo = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/todos`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      await getTodoApi().then((res) => {
+        setTodos(res.data);
       });
-      setTodos(res.data);
     } catch (err) {
       console.log(err);
     }
@@ -58,12 +44,11 @@ const Todo = () => {
       style={{ display: "flex", flexDirection: "column", alignItems: "center" }}
     >
       <ul>
-        {todos.length != 0 ?
-          todos.map((todo, i) => {
-            return (
-              <TodoItem key={i} todo={todo} getTodo={getTodo}/>
-            );
-          }): '목록이 비어 있습니다'}
+        {todos.length != 0
+          ? todos.map((todo, i) => {
+              return <TodoItem key={i} todo={todo} getTodo={getTodo} />;
+            })
+          : "목록이 비어 있습니다"}
       </ul>
       <div>
         <input
