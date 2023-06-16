@@ -2,27 +2,16 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TodoItem from "../components/TodoItem";
+import { getTodoApi, postTodoApi } from "../lib/customAxios";
 
 const Todo = () => {
-  const token = window.localStorage.getItem("token");
-  const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
   const navigate = useNavigate();
-
   const [todos, setTodos] = useState([]);
   const [text, setText] = useState("");
 
   const postTodo = async () => {
     try {
-      const res = await axios.post(
-        `${BACKEND_URL}/todos`,
-        { todo: text },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await postTodoApi(text);
       getTodo();
       setText("");
     } catch (err) {
@@ -32,20 +21,17 @@ const Todo = () => {
 
   const getTodo = async () => {
     try {
-      const res = await axios.get(`${BACKEND_URL}/todos`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      await getTodoApi().then((res) => {
+        setTodos(res.data);
       });
-      setTodos(res.data);
     } catch (err) {
       console.log(err);
     }
   };
-  
-  useEffect(()=> {
+
+  useEffect(() => {
     getTodo();
-  },[])
+  }, []);
 
   return (
     <div

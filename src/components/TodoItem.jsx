@@ -1,20 +1,14 @@
-import axios from "axios";
 import { useState } from "react";
+import { deleteTodoApi, updatedTodoApi } from "../lib/customAxios";
 
 const TodoItem = ({ todo, getTodo }) => {
-  const token = window.localStorage.getItem("token");
-  const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
 
   const [isEdit, setIsEdit] = useState(false);
   const [newTodo, setNewTodo] = useState('');
-
+  
   const deleteTodo = async () => {
     try {
-      const res = await axios.delete(`${BACKEND_URL}/todos/${todo.id}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await deleteTodoApi(todo.id);
       getTodo();
     } catch (err) {
       console.log(err);
@@ -23,19 +17,7 @@ const TodoItem = ({ todo, getTodo }) => {
 
   const checkedTodo = async () => {
     try {
-      const res = await axios.put(
-        `${BACKEND_URL}/todos/${todo.id}`,
-        {
-          todo: todo.todo,
-          isCompleted: !todo.isCompleted,
-        },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await updatedTodoApi(todo.id, todo.todo, !todo.isCompleted);
       getTodo();
     } catch (err) {
       console.log(err);
@@ -44,16 +26,7 @@ const TodoItem = ({ todo, getTodo }) => {
 
   const updatedTodo = async () => {
     try {
-      const res = await axios.put(
-        `${BACKEND_URL}/todos/${todo.id}`,
-        { todo: newTodo, isCompleted: todo.isCompleted },
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      await updatedTodoApi(todo.id, newTodo, todo.isCompleted);
       getTodo();
       setIsEdit(false);
     } catch (err) {
@@ -86,6 +59,7 @@ const TodoItem = ({ todo, getTodo }) => {
           )}
         </label>
       </div>
+      
       {isEdit ? (
         <div>
           <button data-testid="submit-button" onClick={updatedTodo}>
@@ -105,8 +79,8 @@ const TodoItem = ({ todo, getTodo }) => {
           <button
             todos-testid="modify-button"
             onClick={() => {
-              setIsEdit(true);
               setNewTodo(todo.todo);
+              setIsEdit(true);
             }}
           >
             수정
