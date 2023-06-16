@@ -9,6 +9,7 @@ const Signup = () => {
   const [disable, setDisable] = useState(true);
   const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
 
+  // 회원 가입
   const postMember = async () => {
     try {
       const res = await axios.post(`${BACKEND_URL}/auth/signup`, {
@@ -21,6 +22,7 @@ const Signup = () => {
       navigate("/signin");
     } catch (err){console.log(err)}
   };
+
   useEffect(() => {
     // 로그인 여부 검증
     const isLogined = !!window.localStorage.getItem("token");
@@ -29,8 +31,13 @@ const Signup = () => {
     }
   }, []);
 
-  const isDisabled = () => {
-    if (id.includes("@") && pw.length >= 8) {
+  // 이메일 패스워드 유효성 검사
+  const isValidate = () => {
+    
+    const regexId = /@/g; // '@' 포함
+    const regexPw = /.{8,}/g // 8자 이상
+
+    if (regexId.test(id) && regexPw.test(pw)) {
       setDisable(false);
     } else {
       setDisable(true);
@@ -38,7 +45,7 @@ const Signup = () => {
   };
 
   useEffect(() => {
-    isDisabled();
+    isValidate();
   }, [id, pw]);
   return (
     <div>
