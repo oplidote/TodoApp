@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { postMemberApi } from "../lib/customAxios";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
@@ -7,20 +7,14 @@ const Signup = () => {
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [disable, setDisable] = useState(true);
-  const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
-
   // 회원 가입
   const postMember = async () => {
     try {
-      const res = await axios.post(`${BACKEND_URL}/auth/signup`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        email: id,
-        password: pw,
-      });
+      postMemberApi(id, pw);
       navigate("/signin");
-    } catch (err){console.log(err)}
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   useEffect(() => {
@@ -33,9 +27,8 @@ const Signup = () => {
 
   // 이메일 패스워드 유효성 검사
   const isValidate = () => {
-    
     const regexId = /@/g; // '@' 포함
-    const regexPw = /.{8,}/g // 8자 이상
+    const regexPw = /.{8,}/g; // 8자 이상
 
     if (regexId.test(id) && regexPw.test(pw)) {
       setDisable(false);

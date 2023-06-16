@@ -1,45 +1,42 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { loginMemberApi } from "../lib/customAxios";
 
 const Signin = () => {
   const navigate = useNavigate();
   const [id, setId] = useState("");
   const [pw, setPw] = useState("");
   const [disable, setDisable] = useState(true);
-  
-  const postMember = async () => {
+
+  // 로그인 함수
+  const loginMember = async () => {
     try {
-      const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
-      const res = await axios.post(`${BACKEND_URL}/auth/signin`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-          email: id,
-          password: pw,
-      });
-      window.localStorage.setItem('token', res.data.access_token);
+      loginMemberApi(id, pw);
       navigate("/todo");
     } catch {}
   };
 
-  const isDisabled = () => {
-    if (id.includes("@") && pw.length >= 8) {
+  const isValidate = () => {
+    const regexId = /@/g; // '@' 포함
+    const regexPw = /.{8,}/g; // 8자 이상
+
+    if (regexId.test(id) && regexPw.test(pw)) {
       setDisable(false);
     } else {
       setDisable(true);
     }
   };
-  useEffect(()=> {
-    const isLogined = !!window.localStorage.getItem('token');
-    if(isLogined) {
-      navigate('/todo');
+  useEffect(() => {
+    const isLogined = !!window.localStorage.getItem("token");
+    if (isLogined) {
+      navigate("/todo");
     }
-  },[])
+  }, []);
 
   useEffect(() => {
-    isDisabled();
+    isValidate();
   }, [id, pw]);
+  
   return (
     <div>
       <label htmlFor="id">이메일</label>
@@ -66,7 +63,7 @@ const Signin = () => {
         data-testid="signin-button"
         disabled={disable}
         onClick={() => {
-          postMember();
+          loginMember();
         }}
       >
         로그인
