@@ -1,10 +1,11 @@
+import * as React from "react";
 import { useState } from "react";
 import { deleteTodoApi, updatedTodoApi } from "../lib/customAxios";
 
 const TodoItem = ({ todo, getTodo }) => {
 
-  const [isEdit, setIsEdit] = useState(false);
-  const [newTodo, setNewTodo] = useState('');
+  const [isEdit, setIsEdit] = useState<boolean>(false);
+  const [newTodo, setNewTodo] = useState<string>('');
   
   const deleteTodo = async () => {
     try {
@@ -14,7 +15,6 @@ const TodoItem = ({ todo, getTodo }) => {
       console.log(err);
     }
   };
-
   const checkedTodo = async () => {
     try {
       await updatedTodoApi(todo.id, todo.todo, !todo.isCompleted);

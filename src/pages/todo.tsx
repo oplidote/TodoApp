@@ -1,13 +1,12 @@
-import axios from "axios";
+import * as React from "react";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import TodoItem from "../components/TodoItem";
 import { getTodoApi, postTodoApi } from "../lib/customAxios";
 
 const Todo = () => {
-  const navigate = useNavigate();
-  const [todos, setTodos] = useState([]);
-  const [text, setText] = useState("");
+  const [todos, setTodos] = useState<string[]>([]);
+  const [text, setText] = useState<string>("");
 
   const postTodo = async () => {
     try {

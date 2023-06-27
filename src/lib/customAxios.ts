@@ -1,4 +1,4 @@
-import axios, { AxiosInstance } from "axios";
+import axios from "axios";
 
 const token = window.localStorage.getItem("token");
 const BACKEND_URL = process.env.REACT_APP_PUBLIC_BACKEND_URL;
@@ -24,36 +24,44 @@ export const getTodoApi = () => {
   return authAxios.get("/todos");
 };
 
-export const postTodoApi = (text) => {
+export const postTodoApi = (text: string) => {
   return authAxios.post("/todos", { todo: text });
 };
-export const deleteTodoApi = (todo_id) => {
+export const deleteTodoApi = (todo_id: number) => {
   return authAxios.delete(`/todos/${todo_id}`);
 };
 
-export const updatedTodoApi = (todo_id, todo, isCompleted) => {
+export const updatedTodoApi = (
+  todo_id: number,
+  todo: string,
+  isCompleted: boolean
+) => {
   return authAxios.put(`/todos/${todo_id}`, {
     todo,
     isCompleted,
   });
 };
-export const postMemberApi = (id, pw) => {
+export const postMemberApi = (id: string, pw: string) => {
   return notAuthAxios.post("/auth/signup", {
     email: id,
     password: pw,
   });
 };
 
-export const setAuthAxiosHeaders = (token) => {
+export const setAuthAxiosHeaders = (_token: string) => {
   authAxios.interceptors.request.use(function (config) {
-    config.headers.Authorization = `Bearer ${token}`;
+    config.headers.Authorization = `Bearer ${_token}`;
     return config;
   });
 };
 
-export const loginMemberApi = (id, pw) => {
-  return notAuthAxios.post("/auth/signin", {
+export const loginMemberApi = async (id: string, pw: string) => {
+  const loginApiRes = await notAuthAxios.post("/auth/signin", {
     email: id,
     password: pw,
   });
+  setAuthAxiosHeaders(loginApiRes.data.access_token);
+  // localstorage token 저장
+  window.localStorage.setItem("token", loginApiRes.data.access_token);
+  return loginApiRes;
 };

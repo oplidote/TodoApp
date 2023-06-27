@@ -1,37 +1,28 @@
+import * as React from "react";
 import { useEffect, useState } from "react";
-import { postMemberApi } from "../lib/customAxios";
 import { useNavigate } from "react-router-dom";
+import { loginMemberApi } from "../lib/customAxios";
+import { isValidate } from "./signup";
 
-const Signup = () => {
+const Signin = () => {
   const navigate = useNavigate();
-  const [id, setId] = useState("");
-  const [pw, setPw] = useState("");
-  const [disable, setDisable] = useState(true);
-  // 회원 가입
-  const postMember = async () => {
+  const [id, setId] = useState<string>("");
+  const [pw, setPw] = useState<string>("");
+  const [disable, setDisable] = useState<boolean>(true);
+  // 로그인 함수
+  const loginMember = async () => {
     try {
-      postMemberApi(id, pw);
-      navigate("/signin");
+      await loginMemberApi(id, pw);
+      navigate("/todo");
     } catch (err) {
       console.log(err);
     }
   };
 
-  // 이메일 패스워드 유효성 검사
-  const isValidate = () => {
-    const regexId = /@/g; // '@' 포함
-    const regexPw = /.{8,}/g; // 8자 이상
-
-    if (regexId.test(id) && regexPw.test(pw)) {
-      setDisable(false);
-    } else {
-      setDisable(true);
-    }
-  };
-
   useEffect(() => {
-    isValidate();
+    setDisable(isValidate(id, pw));
   }, [id, pw]);
+
   return (
     <div>
       <label htmlFor="id">이메일</label>
@@ -55,16 +46,14 @@ const Signup = () => {
         }}
       />
       <button
-        data-testid="signup-button"
+        data-testid="signin-button"
         disabled={disable}
-        onClick={() => {
-          postMember();
-        }}
+        onClick={loginMember}
       >
-        회원가입
+        로그인
       </button>
     </div>
   );
 };
 
-export default Signup;
+export default Signin;

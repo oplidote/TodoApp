@@ -1,4 +1,4 @@
-import "./App.css";
+import * as React from "react";
 import { Signup, Signin, Todo } from "./pages";
 import { Route, Routes } from "react-router-dom";
 import { PrivateRoute, PublicRoute } from "./components";
